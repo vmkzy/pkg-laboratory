@@ -25,23 +25,33 @@
           <div class="color-summary">
             <div>
               <p class="section-kicker">Текущий цвет</p>
-              <h2 id="current-color-title">#7C5CFC</h2>
+              <h2 id="current-color-title"><span id="current-color-value">#7C5CFC</span></h2>
             </div>
 
             <label class="palette-control">
               <span>Открыть палитру</span>
-              <input type="color" value="#7c5cfc" aria-label="Выбрать цвет из палитры">
+              <input
+                id="color-picker"
+                type="color"
+                value="#7c5cfc"
+                aria-label="Выбрать цвет из палитры"
+              >
             </label>
           </div>
 
-          <div class="color-preview" role="img" aria-label="Текущий фиолетовый цвет">
+          <div
+            id="color-preview"
+            class="color-preview"
+            role="img"
+            aria-label="Образец текущего цвета"
+          >
             <span>HSV · XYZ · LAB</span>
           </div>
 
           <div class="settings-grid">
             <label class="select-field">
               <span>Освещение</span>
-              <select name="illuminant">
+              <select id="illuminant-select" name="illuminant">
                 <option value="D65" selected>D65 — дневной свет</option>
                 <option value="D50">D50 — полиграфия</option>
                 <option value="E">E — равноэнергетический</option>
@@ -50,113 +60,131 @@
 
             <label class="select-field">
               <span>Выход за диапазон</span>
-              <select name="gamut-mapping">
+              <select id="gamut-select" name="gamut-mapping">
                 <option value="clipping" selected>Clipping — обрезание</option>
                 <option value="scaling">Scaling — масштабирование</option>
               </select>
             </label>
           </div>
 
-          <p class="status-message" aria-live="polite">
+          <p id="status-message" class="status-message" aria-live="polite">
             Значения находятся в допустимом диапазоне.
           </p>
         </section>
 
         <section class="models-grid" aria-label="Компоненты цветовых моделей">
-          <section class="model-card model-card--hsv" aria-labelledby="hsv-title">
+          <section
+            class="model-card model-card--hsv"
+            aria-labelledby="hsv-title"
+            data-model="hsv"
+          >
             <header class="model-header">
               <h2 id="hsv-title">HSV</h2>
               <p>Тон · насыщенность · яркость</p>
             </header>
 
-            <label class="component-control">
+            <label class="component-control" data-component="h">
               <span class="component-heading">
                 <strong>H</strong>
-                <span class="numeric-input"><input type="number" min="0" max="360" value="252">°</span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="360" step="0.1" value="252">°</span>
               </span>
-              <input class="range range--hue" type="range" min="0" max="360" value="252">
+              <input data-control="range" class="range range--hue" type="range" min="0" max="360" step="0.1" value="252">
             </label>
 
-            <label class="component-control">
+            <label class="component-control" data-component="s">
               <span class="component-heading">
                 <strong>S</strong>
-                <span class="numeric-input"><input type="number" min="0" max="100" value="63">%</span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="100" step="0.1" value="63">%</span>
               </span>
-              <input class="range range--saturation" type="range" min="0" max="100" value="63">
+              <input data-control="range" class="range range--saturation" type="range" min="0" max="100" step="0.1" value="63">
             </label>
 
-            <label class="component-control">
+            <label class="component-control" data-component="v">
               <span class="component-heading">
                 <strong>V</strong>
-                <span class="numeric-input"><input type="number" min="0" max="100" value="99">%</span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="100" step="0.1" value="99">%</span>
               </span>
-              <input class="range range--value" type="range" min="0" max="100" value="99">
+              <input data-control="range" class="range range--value" type="range" min="0" max="100" step="0.1" value="99">
             </label>
           </section>
 
-          <section class="model-card model-card--xyz" aria-labelledby="xyz-title">
+          <section
+            class="model-card model-card--xyz"
+            aria-labelledby="xyz-title"
+            data-model="xyz"
+          >
             <header class="model-header">
               <h2 id="xyz-title">XYZ</h2>
               <p>Координаты МКО</p>
             </header>
 
-            <label class="component-control">
+            <label class="component-control" data-component="x">
               <span class="component-heading">
                 <strong>X</strong>
-                <span class="numeric-input"><input type="number" min="0" max="100" step="0.1" value="30.2"></span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="100" step="0.01" value="30.2"></span>
               </span>
-              <input class="range range--x" type="range" min="0" max="100" step="0.1" value="30.2">
+              <input data-control="range" class="range range--x" type="range" min="0" max="100" step="0.01" value="30.2">
             </label>
 
-            <label class="component-control">
+            <label class="component-control" data-component="y">
               <span class="component-heading">
                 <strong>Y</strong>
-                <span class="numeric-input"><input type="number" min="0" max="100" step="0.1" value="20.0"></span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="100" step="0.01" value="20.0"></span>
               </span>
-              <input class="range range--y" type="range" min="0" max="100" step="0.1" value="20">
+              <input data-control="range" class="range range--y" type="range" min="0" max="100" step="0.01" value="20">
             </label>
 
-            <label class="component-control">
+            <label class="component-control" data-component="z">
               <span class="component-heading">
                 <strong>Z</strong>
-                <span class="numeric-input"><input type="number" min="0" max="110" step="0.1" value="94.3"></span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="110" step="0.01" value="94.3"></span>
               </span>
-              <input class="range range--z" type="range" min="0" max="110" step="0.1" value="94.3">
+              <input data-control="range" class="range range--z" type="range" min="0" max="110" step="0.01" value="94.3">
             </label>
           </section>
 
-          <section class="model-card model-card--lab" aria-labelledby="lab-title">
+          <section
+            class="model-card model-card--lab"
+            aria-labelledby="lab-title"
+            data-model="lab"
+          >
             <header class="model-header">
               <h2 id="lab-title">LAB</h2>
               <p>Светлота · зелёный–красный · синий–жёлтый</p>
             </header>
 
-            <label class="component-control">
+            <label class="component-control" data-component="l">
               <span class="component-heading">
                 <strong>L</strong>
-                <span class="numeric-input"><input type="number" min="0" max="100" step="0.1" value="52"></span>
+                <span class="numeric-input"><input data-control="number" type="number" min="0" max="100" step="0.01" value="52"></span>
               </span>
-              <input class="range range--lightness" type="range" min="0" max="100" step="0.1" value="52">
+              <input data-control="range" class="range range--lightness" type="range" min="0" max="100" step="0.01" value="52">
             </label>
 
-            <label class="component-control">
+            <label class="component-control" data-component="a">
               <span class="component-heading">
                 <strong>a</strong>
-                <span class="numeric-input"><input type="number" min="-128" max="127" step="0.1" value="49"></span>
+                <span class="numeric-input"><input data-control="number" type="number" min="-128" max="127" step="0.01" value="49"></span>
               </span>
-              <input class="range range--a" type="range" min="-128" max="127" step="0.1" value="49">
+              <input data-control="range" class="range range--a" type="range" min="-128" max="127" step="0.01" value="49">
             </label>
 
-            <label class="component-control">
+            <label class="component-control" data-component="b">
               <span class="component-heading">
                 <strong>b</strong>
-                <span class="numeric-input"><input type="number" min="-128" max="127" step="0.1" value="-74"></span>
+                <span class="numeric-input"><input data-control="number" type="number" min="-128" max="127" step="0.01" value="-74"></span>
               </span>
-              <input class="range range--b" type="range" min="-128" max="127" step="0.1" value="-74">
+              <input data-control="range" class="range range--b" type="range" min="-128" max="127" step="0.01" value="-74">
             </label>
           </section>
         </section>
       </main>
     </div>
+
+    <script src="./js/core/matrix.js"></script>
+    <script src="./js/core/illuminants.js"></script>
+    <script src="./js/core/conversions.js"></script>
+    <script src="./js/core/gamut.js"></script>
+    <script src="./js/app.js"></script>
   </body>
 </html>

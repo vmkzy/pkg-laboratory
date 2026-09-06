@@ -1,3 +1,4 @@
+(function initializeMatrix(global) {
 const MATRIX_SIZE = 3;
 const SINGULAR_EPSILON = 1e-12;
 
@@ -26,7 +27,7 @@ function assertVector3(vector, name = "vector") {
   }
 }
 
-export function multiplyMatrixVector(matrix, vector) {
+function multiplyMatrixVector(matrix, vector) {
   assertMatrix3x3(matrix);
   assertVector3(vector);
 
@@ -35,7 +36,7 @@ export function multiplyMatrixVector(matrix, vector) {
   );
 }
 
-export function multiplyMatrices(left, right) {
+function multiplyMatrices(left, right) {
   assertMatrix3x3(left, "left matrix");
   assertMatrix3x3(right, "right matrix");
 
@@ -49,7 +50,7 @@ export function multiplyMatrices(left, right) {
   );
 }
 
-export function determinant3x3(matrix) {
+function determinant3x3(matrix) {
   assertMatrix3x3(matrix);
 
   const [[a, b, c], [d, e, f], [g, h, i]] = matrix;
@@ -61,7 +62,7 @@ export function determinant3x3(matrix) {
   );
 }
 
-export function invertMatrix3x3(matrix) {
+function invertMatrix3x3(matrix) {
   assertMatrix3x3(matrix);
 
   const [[a, b, c], [d, e, f], [g, h, i]] = matrix;
@@ -92,9 +93,19 @@ export function invertMatrix3x3(matrix) {
   ];
 }
 
-export function scaleMatrixColumns(matrix, scales) {
+function scaleMatrixColumns(matrix, scales) {
   assertMatrix3x3(matrix);
   assertVector3(scales, "column scales");
 
   return matrix.map((row) => row.map((value, index) => value * scales[index]));
 }
+
+global.ColorLab ??= {};
+global.ColorLab.matrix = Object.freeze({
+  multiplyMatrixVector,
+  multiplyMatrices,
+  determinant3x3,
+  invertMatrix3x3,
+  scaleMatrixColumns,
+});
+})(globalThis);

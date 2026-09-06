@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
+import "../js/core/matrix.js";
+import "../js/core/illuminants.js";
+import "../js/core/conversions.js";
+
+const {
   hsvToLab,
   hsvToRgb,
   labToRgb,
@@ -10,12 +14,12 @@ import {
   rgbToXyz,
   xyzToLab,
   xyzToRgb,
-} from "../js/core/conversions.js";
-import {
+} = globalThis.ColorLab.conversions;
+const {
   createRgbXyzMatrices,
   getWhitePoint,
-} from "../js/core/illuminants.js";
-import { multiplyMatrices } from "../js/core/matrix.js";
+} = globalThis.ColorLab.illuminants;
+const { multiplyMatrices } = globalThis.ColorLab.matrix;
 
 const ILLUMINANT_NAMES = ["D65", "D50", "E"];
 

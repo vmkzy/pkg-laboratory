@@ -205,6 +205,14 @@ select {
   line-height: 1.45;
 }
 
+.status-message--warning {
+  color: #ffd28c;
+}
+
+.numeric-input:has(input:invalid) {
+  border-color: #ef8292;
+}
+
 .models-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

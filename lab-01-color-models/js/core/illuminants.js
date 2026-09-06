@@ -1,23 +1,24 @@
-import {
+(function initializeIlluminants(global) {
+const {
   invertMatrix3x3,
   multiplyMatrixVector,
   scaleMatrixColumns,
-} from "./matrix.js";
+} = global.ColorLab.matrix;
 
 // Chromaticity coordinates are source data, not ready-made conversion matrices.
-export const SRGB_PRIMARIES = Object.freeze({
+const SRGB_PRIMARIES = Object.freeze({
   red: Object.freeze({ x: 0.64, y: 0.33 }),
   green: Object.freeze({ x: 0.3, y: 0.6 }),
   blue: Object.freeze({ x: 0.15, y: 0.06 }),
 });
 
-export const ILLUMINANTS = Object.freeze({
+const ILLUMINANTS = Object.freeze({
   D65: Object.freeze({ x: 0.3127, y: 0.329 }),
   D50: Object.freeze({ x: 0.34567, y: 0.3585 }),
   E: Object.freeze({ x: 1 / 3, y: 1 / 3 }),
 });
 
-export function xyToXyz({ x, y }, luminance = 1) {
+function xyToXyz({ x, y }, luminance = 1) {
   if (![x, y, luminance].every(Number.isFinite) || y === 0) {
     throw new TypeError("chromaticity and luminance must be finite, with y not equal to zero");
   }
@@ -41,7 +42,7 @@ function createPrimaryMatrix(primaries) {
   ];
 }
 
-export function getWhitePoint(illuminantName) {
+function getWhitePoint(illuminantName) {
   const chromaticity = ILLUMINANTS[illuminantName];
 
   if (!chromaticity) {
@@ -51,7 +52,7 @@ export function getWhitePoint(illuminantName) {
   return xyToXyz(chromaticity);
 }
 
-export function createRgbXyzMatrices(
+function createRgbXyzMatrices(
   illuminantName,
   primaries = SRGB_PRIMARIES,
 ) {
@@ -72,3 +73,12 @@ export function createRgbXyzMatrices(
     xyzToRgb,
   };
 }
+
+global.ColorLab.illuminants = Object.freeze({
+  SRGB_PRIMARIES,
+  ILLUMINANTS,
+  xyToXyz,
+  getWhitePoint,
+  createRgbXyzMatrices,
+});
+})(globalThis);

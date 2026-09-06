@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
+import "../js/core/matrix.js";
+
+const {
   determinant3x3,
   invertMatrix3x3,
   multiplyMatrices,
   multiplyMatrixVector,
-} from "../js/core/matrix.js";
+} = globalThis.ColorLab.matrix;
 
 const EPSILON = 1e-10;
 

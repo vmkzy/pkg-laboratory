@@ -1,5 +1,6 @@
-import { createRgbXyzMatrices } from "./illuminants.js";
-import { multiplyMatrixVector } from "./matrix.js";
+(function initializeConversions(global) {
+const { createRgbXyzMatrices } = global.ColorLab.illuminants;
+const { multiplyMatrixVector } = global.ColorLab.matrix;
 
 const RGB_MAX = 255;
 const PERCENT_MAX = 100;
@@ -19,19 +20,19 @@ function normalizeHue(hue) {
   return ((hue % 360) + 360) % 360;
 }
 
-export function srgbChannelToLinear(channel) {
+function srgbChannelToLinear(channel) {
   return channel <= 0.04045
     ? channel / 12.92
     : ((channel + 0.055) / 1.055) ** 2.4;
 }
 
-export function linearChannelToSrgb(channel) {
+function linearChannelToSrgb(channel) {
   return channel <= 0.0031308
     ? 12.92 * channel
     : 1.055 * channel ** (1 / 2.4) - 0.055;
 }
 
-export function hsvToRgb({ h, s, v }) {
+function hsvToRgb({ h, s, v }) {
   assertFiniteComponents({ h, s, v }, ["h", "s", "v"], "HSV");
 
   if (s < 0 || s > PERCENT_MAX || v < 0 || v > PERCENT_MAX) {
@@ -72,7 +73,7 @@ export function hsvToRgb({ h, s, v }) {
   };
 }
 
-export function rgbToHsv({ r, g, b }) {
+function rgbToHsv({ r, g, b }) {
   assertFiniteComponents({ r, g, b }, ["r", "g", "b"], "RGB");
 
   const red = r / RGB_MAX;
@@ -101,7 +102,7 @@ export function rgbToHsv({ r, g, b }) {
   };
 }
 
-export function rgbToXyz({ r, g, b }, illuminantName = "D65") {
+function rgbToXyz({ r, g, b }, illuminantName = "D65") {
   assertFiniteComponents({ r, g, b }, ["r", "g", "b"], "RGB");
 
   const linearRgb = [r, g, b].map((channel) =>
@@ -119,7 +120,7 @@ export function rgbToXyz({ r, g, b }, illuminantName = "D65") {
 
 // The returned RGB values are intentionally not limited to 0…255.
 // Clipping or scaling is a separate, user-selectable step.
-export function xyzToRgb({ x, y, z }, illuminantName = "D65") {
+function xyzToRgb({ x, y, z }, illuminantName = "D65") {
   assertFiniteComponents({ x, y, z }, ["x", "y", "z"], "XYZ");
 
   const normalizedXyz = [x, y, z].map(
@@ -146,7 +147,7 @@ function labInverseTransform(value) {
     : 3 * LAB_DELTA ** 2 * (value - 4 / 29);
 }
 
-export function xyzToLab({ x, y, z }, illuminantName = "D65") {
+function xyzToLab({ x, y, z }, illuminantName = "D65") {
   assertFiniteComponents({ x, y, z }, ["x", "y", "z"], "XYZ");
 
   const { whitePoint } = createRgbXyzMatrices(illuminantName);
@@ -161,7 +162,7 @@ export function xyzToLab({ x, y, z }, illuminantName = "D65") {
   };
 }
 
-export function labToXyz({ l, a, b }, illuminantName = "D65") {
+function labToXyz({ l, a, b }, illuminantName = "D65") {
   assertFiniteComponents({ l, a, b }, ["l", "a", "b"], "LAB");
 
   const { whitePoint } = createRgbXyzMatrices(illuminantName);
@@ -176,14 +177,29 @@ export function labToXyz({ l, a, b }, illuminantName = "D65") {
   };
 }
 
-export function hsvToXyz(hsv, illuminantName = "D65") {
+function hsvToXyz(hsv, illuminantName = "D65") {
   return rgbToXyz(hsvToRgb(hsv), illuminantName);
 }
 
-export function hsvToLab(hsv, illuminantName = "D65") {
+function hsvToLab(hsv, illuminantName = "D65") {
   return xyzToLab(hsvToXyz(hsv, illuminantName), illuminantName);
 }
 
-export function labToRgb(lab, illuminantName = "D65") {
+function labToRgb(lab, illuminantName = "D65") {
   return xyzToRgb(labToXyz(lab, illuminantName), illuminantName);
 }
+
+global.ColorLab.conversions = Object.freeze({
+  srgbChannelToLinear,
+  linearChannelToSrgb,
+  hsvToRgb,
+  rgbToHsv,
+  rgbToXyz,
+  xyzToRgb,
+  xyzToLab,
+  labToXyz,
+  hsvToXyz,
+  hsvToLab,
+  labToRgb,
+});
+})(globalThis);
