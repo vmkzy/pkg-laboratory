@@ -8,6 +8,7 @@
     xyzToRgb,
   } = global.ColorLab.conversions;
   const { mapRgbToGamut } = global.ColorLab.gamut;
+  const { buildComponentGradient } = global.ColorLab.gradients;
 
   const MODEL_COMPONENTS = Object.freeze({
     hsv: ["h", "s", "v"],
@@ -30,6 +31,7 @@
 
   let activeModel = "hsv";
   let state = createStateFromRgb(hexToRgb(colorPicker.value));
+  let gradientFrameId = 0;
 
   function collectModelControls() {
     const controls = {};
@@ -172,12 +174,40 @@
     }
   }
 
+  function renderGradients() {
+    for (const [modelName, components] of Object.entries(modelControls)) {
+      for (const [componentName, { range }] of Object.entries(components)) {
+        range.style.setProperty(
+          "--range-background",
+          buildComponentGradient({
+            modelName,
+            componentName,
+            color: state[modelName],
+            minimum: Number(range.min),
+            maximum: Number(range.max),
+            illuminant: illuminantSelect.value,
+            gamutStrategy: gamutSelect.value,
+          }),
+        );
+      }
+    }
+  }
+
+  function scheduleGradientRender() {
+    global.cancelAnimationFrame(gradientFrameId);
+    gradientFrameId = global.requestAnimationFrame(() => {
+      renderGradients();
+      gradientFrameId = 0;
+    });
+  }
+
   function render(correctionMessage = "") {
     writeModel("hsv", state.hsv);
     writeModel("xyz", state.xyz);
     writeModel("lab", state.lab);
     renderColor();
     renderStatus(correctionMessage);
+    scheduleGradientRender();
   }
 
   function updateFromModel(modelName, correctionMessage = "") {

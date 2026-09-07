@@ -18,6 +18,7 @@ function assertClose(actual, expected, tolerance = 1e-9) {
 
 test("detects whether RGB is inside the display gamut", () => {
   assert.equal(isRgbInGamut({ r: 0, g: 127.5, b: 255 }), true);
+  assert.equal(isRgbInGamut({ r: -1e-9, g: 128, b: 255 + 1e-9 }), true);
   assert.equal(isRgbInGamut({ r: -0.1, g: 128, b: 255 }), false);
   assert.equal(isRgbInGamut({ r: 0, g: 128, b: 255.1 }), false);
 });

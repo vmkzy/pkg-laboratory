@@ -1,6 +1,7 @@
 (function initializeGamutMapping(global) {
   const RGB_MIN = 0;
   const RGB_MAX = 255;
+  const GAMUT_EPSILON = 1e-7;
 
   function assertRgb(rgb) {
     if (
@@ -15,7 +16,9 @@
     assertRgb(rgb);
 
     return [rgb.r, rgb.g, rgb.b].every(
-      (component) => component >= RGB_MIN && component <= RGB_MAX,
+      (component) =>
+        component >= RGB_MIN - GAMUT_EPSILON &&
+        component <= RGB_MAX + GAMUT_EPSILON,
     );
   }
 
@@ -33,7 +36,7 @@
     assertRgb(rgb);
 
     if (isRgbInGamut(rgb)) {
-      return { ...rgb };
+      return clipRgb(rgb);
     }
 
     const components = [rgb.r, rgb.g, rgb.b];
