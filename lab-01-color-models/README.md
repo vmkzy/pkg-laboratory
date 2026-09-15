@@ -39,7 +39,8 @@ npm test
 ```text
 lab-01-color-models/
 ├── css/styles.css              — оформление интерфейса
-├── docs/report.md              — сопроводительная документация
+├── docs/report.docx            — сопроводительная документация Word
+├── docs/report.md              — текстовая версия документации
 ├── js/app.js                   — состояние и обработчики интерфейса
 ├── js/core/conversions.js      — формулы преобразований
 ├── js/core/gamut.js            — Clipping и Scaling
@@ -50,4 +51,4 @@ lab-01-color-models/
 └── index.html
 ```
 
-Полное описание формул и принятых решений приведено в [отчёте](./docs/report.md).
+Полное описание математических формул и принятых решений приведено в [сопроводительной документации](./docs/report.docx).
