@@ -11,6 +11,10 @@ public interface IImageParser
 
     bool CanParse(ReadOnlySpan<byte> signature);
 
+    /// <summary>
+    /// Reads metadata from a readable, seekable stream; the caller owns and closes it.
+    /// A malformed image returns Corrupted, while I/O failures may throw.
+    /// </summary>
     ValueTask<ImageMetadata> ParseAsync(
         Stream stream,
         string filePath,
