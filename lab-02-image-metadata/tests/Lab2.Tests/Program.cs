@@ -1,6 +1,9 @@
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.IO.Compression;
+using Lab2.Core.Contracts;
 using Lab2.Core.Models;
+using Lab2.Core.Services;
 using Lab2.Infrastructure.Parsers;
 
 var failures = new List<string>();
@@ -110,6 +113,9 @@ I32(hugeDimensions, 22, int.MaxValue);
 Check((await Parse(hugeDimensions)).Status == FileProcessingStatus.Corrupted,
     "Огромные размеры не приводят к переполнению расчёта пикселей");
 
+await FormatParserTests.RunAsync(Check);
+await CheckFolderScanner();
+
 if (args.Length == 2 && args[0] == "--samples")
 {
     using var archive = ZipFile.OpenRead(args[1]);
@@ -129,9 +135,26 @@ if (args.Length == 2 && args[0] == "--samples")
     Check(count > 0, "В архиве должны быть BMP-файлы");
     Console.WriteLine($"Проверено BMP из архива: {count}.");
 }
+else if (args.Length == 2 && args[0] == "--probe-image")
+{
+    await using var input = File.OpenRead(args[1]);
+    var signature = new byte[16];
+    var read = await input.ReadAsync(signature);
+    IImageParser[] parsers = [new BmpParser(), new PngParser(), new JpegParser(), new GifParser()];
+    var selected = parsers.FirstOrDefault(item => item.CanParse(signature.AsSpan(0, read)));
+    Check(selected is not null, "Формат проверочного изображения распознан");
+    if (selected is not null)
+    {
+        var image = await selected.ParseAsync(input, args[1]);
+        Console.WriteLine($"Реальный файл: {image.Format}, {image.Width} × {image.Height}, " +
+                          $"{image.ColorDepth} бит, статус {image.Status}.");
+        Check(image.Status == FileProcessingStatus.Valid, image.ErrorMessage ??
+            "Реальный файл должен быть корректным");
+    }
+}
 else if (args.Length != 0)
 {
-    Console.Error.WriteLine("Использование: Lab2.Tests [--samples путь-к-zip]");
+    Console.Error.WriteLine("Использование: Lab2.Tests [--samples путь-к-zip | --probe-image путь-к-файлу]");
     return 2;
 }
 
@@ -221,3 +244,102 @@ static void U32(byte[] bytes, int offset, uint value) =>
 
 static void I32(byte[] bytes, int offset, int value) =>
     BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(offset), value);
+
+async Task CheckFolderScanner()
+{
+    // The test owns this uniquely created directory and removes only these fixtures.
+    var directory = Directory.CreateTempSubdirectory("lab2-scanner-");
+    try
+    {
+        var nested = Directory.CreateDirectory(Path.Combine(directory.FullName, "inside"));
+        await File.WriteAllBytesAsync(Path.Combine(directory.FullName, "renamed.png"), MakeBmp());
+        await File.WriteAllBytesAsync(Path.Combine(directory.FullName, "broken.bmp"), MakeBmp()[..^1]);
+        await File.WriteAllTextAsync(Path.Combine(directory.FullName, "notes.txt"), "not an image");
+        await File.WriteAllBytesAsync(Path.Combine(nested.FullName, "nested.bmp"), MakeBmp());
+
+        var scanner = new FolderScanner([new BmpParser()]);
+        var reports = new ConcurrentQueue<ScanProgress>();
+        var progress = new ImmediateProgress<ScanProgress>(reports.Enqueue);
+        var found = new List<ImageMetadata>();
+        await foreach (var item in scanner.ScanAsync(new ScanRequest
+        {
+            FolderPath = directory.FullName,
+            WorkerCount = 2,
+            IncludeSubdirectories = true
+        }, progress))
+            found.Add(item);
+
+        Check(found.Count == 4, "Рекурсивный обход возвращает все четыре файла");
+        Check(found.Single(item => item.FileName == "renamed.png").Format == ImageFormat.Bmp,
+            "Менеджер выбирает парсер по сигнатуре, а не расширению");
+        Check(found.Single(item => item.FileName == "broken.bmp").Status == FileProcessingStatus.Corrupted,
+            "Повреждённый файл не останавливает соседние файлы");
+        Check(found.Single(item => item.FileName == "notes.txt").Status == FileProcessingStatus.Unsupported,
+            "Неизвестный формат отображается как неподдерживаемый");
+        Check(reports.LastOrDefault() is { DiscoveredFiles: 4, ProcessedFiles: 4,
+            ValidFiles: 2, ProblemFiles: 2, EnumerationCompleted: true, Percentage: 100 },
+            "Итоговый прогресс содержит верные счётчики");
+
+        found.Clear();
+        await foreach (var item in scanner.ScanAsync(new ScanRequest
+        {
+            FolderPath = directory.FullName,
+            WorkerCount = 1,
+            IncludeSubdirectories = false
+        }))
+            found.Add(item);
+        Check(found.Count == 3, "При выключенной рекурсии вложенный файл не читается");
+
+        using var canceled = new CancellationTokenSource();
+        canceled.Cancel();
+        try
+        {
+            await foreach (var item in scanner.ScanAsync(new ScanRequest
+            {
+                FolderPath = directory.FullName,
+                WorkerCount = 2
+            }, cancellationToken: canceled.Token))
+            {
+                _ = item;
+            }
+            Check(false, "Отменённое сканирование должно прерваться");
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected: no worker may keep the scan alive after cancellation.
+        }
+
+        for (var index = 0; index < 260; index++)
+            await File.WriteAllBytesAsync(Path.Combine(directory.FullName, $"batch-{index:D3}.bmp"), MakeBmp());
+
+        var batchCount = 0;
+        await foreach (var item in scanner.ScanAsync(new ScanRequest
+        {
+            FolderPath = directory.FullName,
+            WorkerCount = 1
+        }))
+        {
+            if (item.Status == FileProcessingStatus.Valid) batchCount++;
+        }
+        Check(batchCount == 262, "Ограниченные очереди пропускают больше файлов, чем их ёмкость");
+
+        await foreach (var item in scanner.ScanAsync(new ScanRequest
+        {
+            FolderPath = directory.FullName,
+            WorkerCount = 1
+        }))
+        {
+            _ = item;
+            break;
+        }
+    }
+    finally
+    {
+        Directory.Delete(directory.FullName, recursive: true);
+    }
+}
+
+sealed class ImmediateProgress<T>(Action<T> report) : IProgress<T>
+{
+    public void Report(T value) => report(value);
+}

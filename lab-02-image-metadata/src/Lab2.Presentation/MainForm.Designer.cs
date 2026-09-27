@@ -128,6 +128,7 @@ partial class MainForm
         cancelButton.TabIndex = 3;
         cancelButton.Text = "Отмена";
         cancelButton.UseVisualStyleBackColor = true;
+        cancelButton.Click += CancelButton_Click;
 
         subdirectoriesCheckBox.AutoSize = true;
         subdirectoriesCheckBox.Checked = true;
@@ -170,6 +171,7 @@ partial class MainForm
         contentSplit.Margin = new Padding(0);
         contentSplit.Panel1.Controls.Add(resultsGrid);
         contentSplit.Panel2.Controls.Add(previewLayout);
+        contentSplit.Size = new Size(1056, 500);
         contentSplit.SplitterDistance = 740;
         contentSplit.TabIndex = 2;
 
@@ -191,6 +193,8 @@ partial class MainForm
         resultsGrid.ReadOnly = true;
         resultsGrid.RowHeadersVisible = false;
         resultsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        resultsGrid.VirtualMode = true;
+        resultsGrid.CellValueNeeded += ResultsGrid_CellValueNeeded;
         resultsGrid.SelectionChanged += ResultsGrid_SelectionChanged;
 
         previewLayout.ColumnCount = 1;
@@ -225,7 +229,7 @@ partial class MainForm
         detailsTitleLabel.Text = "Сведения о файле";
         detailsTitleLabel.TextAlign = ContentAlignment.BottomLeft;
 
-        detailsValueLabel.AutoSize = true;
+        detailsValueLabel.AutoSize = false;
         detailsValueLabel.Dock = DockStyle.Fill;
         detailsValueLabel.ForeColor = Color.DimGray;
         detailsValueLabel.Text = "Выберите файл в таблице";
