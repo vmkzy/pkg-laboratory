@@ -1,13 +1,17 @@
 using Lab2.Core.Models;
 using Lab2.Core.Services;
 using Lab2.Infrastructure.Parsers;
+using System.Runtime.InteropServices;
+using ImageLockMode = System.Drawing.Imaging.ImageLockMode;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Lab2.Presentation;
 
 public partial class MainForm : Form
 {
     private readonly FolderScanner _scanner = new([
-        new BmpParser(), new PngParser(), new JpegParser(), new GifParser()
+        new BmpParser(), new PngParser(), new JpegParser(), new GifParser(),
+        new TiffParser(), new PcxParser()
     ]);
     private readonly List<ImageMetadata> _results = [];
     private CancellationTokenSource? _scanCancellation;
@@ -189,7 +193,7 @@ public partial class MainForm : Form
         try
         {
             // Rendering only: metadata above always comes from our own byte parser.
-            var bitmap = await Task.Run(() => CreatePreview(item.FilePath));
+            var bitmap = await Task.Run(() => CreatePreview(item.FilePath, item.Format));
             if (IsDisposed || version != _previewVersion)
                 bitmap.Dispose();
             else
@@ -202,10 +206,29 @@ public partial class MainForm : Form
         }
     }
 
-    private static Bitmap CreatePreview(string path)
+    private static Bitmap CreatePreview(string path, ImageFormat format)
     {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read,
             FileShare.ReadWrite | FileShare.Delete);
+        if (format == ImageFormat.Pcx)
+        {
+            var preview = PcxPreviewDecoder.Decode(stream);
+            var bitmap = new Bitmap(preview.Width, preview.Height, PixelFormat.Format24bppRgb);
+            var area = new Rectangle(0, 0, preview.Width, preview.Height);
+            var data = bitmap.LockBits(area, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+            try
+            {
+                for (var row = 0; row < preview.Height; row++)
+                    Marshal.Copy(preview.BgrPixels, row * preview.Width * 3,
+                        IntPtr.Add(data.Scan0, row * data.Stride), preview.Width * 3);
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+            return bitmap;
+        }
+
         using var source = Image.FromStream(stream, false, true);
         using var thumbnail = source.GetThumbnailImage(320, 240, () => false, IntPtr.Zero);
         return new Bitmap(thumbnail);

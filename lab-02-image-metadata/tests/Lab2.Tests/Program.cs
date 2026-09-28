@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO.Compression;
 using Lab2.Core.Contracts;
 using Lab2.Core.Models;
@@ -114,6 +115,7 @@ Check((await Parse(hugeDimensions)).Status == FileProcessingStatus.Corrupted,
     "Огромные размеры не приводят к переполнению расчёта пикселей");
 
 await FormatParserTests.RunAsync(Check);
+await TiffPcxTests.RunAsync(Check);
 await CheckFolderScanner();
 
 if (args.Length == 2 && args[0] == "--samples")
@@ -140,7 +142,8 @@ else if (args.Length == 2 && args[0] == "--probe-image")
     await using var input = File.OpenRead(args[1]);
     var signature = new byte[16];
     var read = await input.ReadAsync(signature);
-    IImageParser[] parsers = [new BmpParser(), new PngParser(), new JpegParser(), new GifParser()];
+    IImageParser[] parsers = [new BmpParser(), new PngParser(), new JpegParser(),
+        new GifParser(), new TiffParser(), new PcxParser()];
     var selected = parsers.FirstOrDefault(item => item.CanParse(signature.AsSpan(0, read)));
     Check(selected is not null, "Формат проверочного изображения распознан");
     if (selected is not null)
@@ -152,9 +155,21 @@ else if (args.Length == 2 && args[0] == "--probe-image")
             "Реальный файл должен быть корректным");
     }
 }
+else if (args.Length is 1 or 2 && args[0] == "--stress")
+{
+    var count = args.Length == 2 && int.TryParse(args[1], out var requested)
+        ? requested : 100_000;
+    if (count is < 1 or > 100_000)
+    {
+        Console.Error.WriteLine("Для --stress укажите количество от 1 до 100000.");
+        return 2;
+    }
+
+    await CheckStress(count);
+}
 else if (args.Length != 0)
 {
-    Console.Error.WriteLine("Использование: Lab2.Tests [--samples путь-к-zip | --probe-image путь-к-файлу]");
+    Console.Error.WriteLine("Использование: Lab2.Tests [--samples путь-к-zip | --probe-image путь-к-файлу | --stress [количество]]");
     return 2;
 }
 
@@ -336,6 +351,79 @@ async Task CheckFolderScanner()
     finally
     {
         Directory.Delete(directory.FullName, recursive: true);
+    }
+}
+
+async Task CheckStress(int count)
+{
+    var directory = Directory.CreateTempSubdirectory("lab2-stress-");
+    try
+    {
+        const int filesPerFolder = 1_000;
+        var folderCount = (count + filesPerFolder - 1) / filesPerFolder;
+        var folders = new string[folderCount];
+        for (var index = 0; index < folderCount; index++)
+            folders[index] = Directory.CreateDirectory(
+                Path.Combine(directory.FullName, $"part-{index:D3}")).FullName;
+
+        var good = MakeBmp();
+        var broken = good[..^1];
+        Console.WriteLine($"Создание {count:N0} небольших файлов для нагрузочной проверки...");
+        var watch = Stopwatch.StartNew();
+        Parallel.For(0, count,
+            new ParallelOptions { MaxDegreeOfParallelism = 8 }, index =>
+            {
+                var extension = index % 50 == 1 ? ".dat" : ".bmp";
+                var path = Path.Combine(folders[index / filesPerFolder], $"image-{index:D6}{extension}");
+                File.WriteAllBytes(path, index % 20 == 0 ? broken : good);
+            });
+        Console.WriteLine($"Файлы созданы за {watch.Elapsed.TotalSeconds:0.0} с.");
+
+        var scanner = new FolderScanner([new BmpParser()]);
+        ScanProgress? lastProgress = null;
+        var progress = new ImmediateProgress<ScanProgress>(value => lastProgress = value);
+        var validCount = 0;
+        var corruptedCount = 0;
+        var renamedCount = 0;
+        watch.Restart();
+        await foreach (var item in scanner.ScanAsync(new ScanRequest
+        {
+            FolderPath = directory.FullName,
+            WorkerCount = Math.Clamp(Environment.ProcessorCount, 1, 16),
+            IncludeSubdirectories = true
+        }, progress))
+        {
+            if (item.Status == FileProcessingStatus.Valid) validCount++;
+            if (item.Status == FileProcessingStatus.Corrupted) corruptedCount++;
+            if (item.FileName.EndsWith(".dat", StringComparison.OrdinalIgnoreCase) &&
+                item.Status == FileProcessingStatus.Valid && item.Format == ImageFormat.Bmp)
+                renamedCount++;
+        }
+        watch.Stop();
+
+        var expectedCorrupted = (count + 19) / 20;
+        var expectedRenamed = Enumerable.Range(0, count).Count(index =>
+            index % 50 == 1 && index % 20 != 0);
+        Check(validCount == count - expectedCorrupted && corruptedCount == expectedCorrupted,
+            "Нагрузочный обход возвращает каждый корректный и повреждённый файл один раз");
+        Check(renamedCount == expectedRenamed,
+            "Нагрузочный обход определяет формат файлов с неверным расширением");
+        Check(lastProgress is { EnumerationCompleted: true, Percentage: 100 } &&
+              lastProgress.DiscoveredFiles == count && lastProgress.ProcessedFiles == count,
+            "Нагрузочный обход завершает прогресс на 100% без потери файлов");
+        Console.WriteLine($"Сканирование: {watch.Elapsed.TotalSeconds:0.0} с; " +
+            $"корректных: {validCount:N0}; повреждённых: {corruptedCount:N0}; " +
+            $"распознано с расширением .dat: {renamedCount:N0}.");
+    }
+    finally
+    {
+        // Delete only the unique directory created by this test in the system temp folder.
+        var tempRoot = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar);
+        var parent = Path.GetFullPath(directory.Parent!.FullName)
+            .TrimEnd(Path.DirectorySeparatorChar);
+        if (!string.Equals(parent, tempRoot, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Неверный путь временной папки теста.");
+        directory.Delete(recursive: true);
     }
 }
 
