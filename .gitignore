@@ -3,4 +3,7 @@
 .vs/
 *.user
 *.suo
+~$*.docx
 lab-02-image-metadata/dist/
+lab-02-image-metadata/examples/
+lab-02-image-metadata/demo-files/

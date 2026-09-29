@@ -167,9 +167,14 @@ else if (args.Length is 1 or 2 && args[0] == "--stress")
 
     await CheckStress(count);
 }
+else if (args.Length == 2 && args[0] == "--make-demo")
+{
+    await FormatParserTests.CreateDemoFilesAsync(args[1], Check);
+    Console.WriteLine($"Примеры созданы и проверены: {Path.GetFullPath(args[1])}");
+}
 else if (args.Length != 0)
 {
-    Console.Error.WriteLine("Использование: Lab2.Tests [--samples путь-к-zip | --probe-image путь-к-файлу | --stress [количество]]");
+    Console.Error.WriteLine("Использование: Lab2.Tests [--samples путь-к-zip | --probe-image путь-к-файлу | --stress [количество] | --make-demo папка]");
     return 2;
 }
 

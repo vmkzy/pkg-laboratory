@@ -6,6 +6,43 @@ using Lab2.Infrastructure.Parsers;
 
 internal static class FormatParserTests
 {
+    public static async Task CreateDemoFilesAsync(string directoryPath,
+        Action<bool, string> check)
+    {
+        if (Directory.Exists(directoryPath))
+            throw new IOException($"Папка для примеров уже существует: {directoryPath}");
+
+        Directory.CreateDirectory(directoryPath);
+        var png = MakePng();
+        await File.WriteAllBytesAsync(Path.Combine(directoryPath, "01-correct.png"), png);
+        await File.WriteAllBytesAsync(Path.Combine(directoryPath, "02-png-without-iend.png"),
+            png[..^12]);
+        await File.WriteAllBytesAsync(Path.Combine(directoryPath, "03-png-renamed-to-jpg.jpg"), png);
+        await File.WriteAllTextAsync(Path.Combine(directoryPath, "04-not-an-image.jpg"),
+            "This text file is not a JPEG image.");
+
+        var scanner = new FolderScanner([new BmpParser(), new PngParser(), new JpegParser(),
+            new GifParser(), new TiffParser(), new PcxParser()]);
+        var results = new List<ImageMetadata>();
+        await foreach (var item in scanner.ScanAsync(new ScanRequest
+        {
+            FolderPath = directoryPath,
+            WorkerCount = 2
+        })) results.Add(item);
+
+        check(results.Count == 4, "В папке примеров должны быть четыре файла");
+        if (results.Count != 4) return;
+        check(results.Single(item => item.FileName == "01-correct.png").Status ==
+              FileProcessingStatus.Valid, "Контрольный PNG корректен");
+        check(results.Single(item => item.FileName == "02-png-without-iend.png").Status ==
+              FileProcessingStatus.Corrupted, "PNG без IEND помечается повреждённым");
+        var renamed = results.Single(item => item.FileName == "03-png-renamed-to-jpg.jpg");
+        check(renamed.Status == FileProcessingStatus.Valid && renamed.Format == ImageFormat.Png,
+            "PNG с расширением JPG распознаётся по сигнатуре");
+        check(results.Single(item => item.FileName == "04-not-an-image.jpg").Status ==
+              FileProcessingStatus.Unsupported, "Текст с расширением JPG не считается изображением");
+    }
+
     public static async Task RunAsync(Action<bool, string> check)
     {
         var pngParser = new PngParser();
