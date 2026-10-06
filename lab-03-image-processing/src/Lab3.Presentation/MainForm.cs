@@ -1,33 +1,80 @@
+using System.Runtime.InteropServices;
+using Lab3.PixelAccess;
+
 namespace Lab3.Presentation;
 
-public sealed class MainForm : Form
+public partial class MainForm : Form
 {
+    private PixelBuffer? _sourceBuffer;
+
     public MainForm()
     {
-        Text = "Лабораторная работа 3 — обработка изображений";
-        StartPosition = FormStartPosition.CenterScreen;
-        MinimumSize = new Size(720, 480);
-        Size = new Size(960, 640);
-
-        var title = new Label
-        {
-            Dock = DockStyle.Top,
-            Height = 72,
-            Padding = new Padding(20),
-            Font = new Font(Font.FontFamily, 15, FontStyle.Bold),
-            Text = "Лабораторная работа 3. Обработка изображений",
-            TextAlign = ContentAlignment.MiddleLeft
-        };
-
-        var message = new Label
-        {
-            Dock = DockStyle.Fill,
-            Font = new Font(Font.FontFamily, 11),
-            Text = "Проект создан. Загрузка изображений и алгоритмы будут добавлены на следующих этапах.",
-            TextAlign = ContentAlignment.MiddleCenter
-        };
-
-        Controls.Add(message);
-        Controls.Add(title);
+        InitializeComponent();
     }
+
+    private async void OpenButton_Click(object? sender, EventArgs e)
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Открыть изображение",
+            Filter = "Изображения|*.bmp;*.png;*.jpg;*.jpeg;*.gif;*.tif;*.tiff|Все файлы|*.*",
+            RestoreDirectory = true
+        };
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        var filePath = dialog.FileName;
+        openButton.Enabled = false;
+        loadProgressBar.Visible = true;
+        statusLabel.Text = "Загрузка изображения...";
+
+        try
+        {
+            var loaded = await Task.Run(() =>
+            {
+                var buffer = BitmapPixelAccess.Load(filePath);
+                return (Buffer: buffer, Preview: BitmapPixelAccess.ToBitmap(buffer));
+            });
+
+            if (IsDisposed || Disposing)
+            {
+                loaded.Preview.Dispose();
+                return;
+            }
+
+            _sourceBuffer = loaded.Buffer;
+            SetImage(sourcePictureBox, loaded.Preview);
+            SetImage(resultPictureBox, null);
+            resultPlaceholder.Visible = true;
+            statusLabel.Text = $"{Path.GetFileName(filePath)} — " +
+                $"{_sourceBuffer.Width} × {_sourceBuffer.Height} пикселей";
+        }
+        catch (Exception error) when (error is ArgumentException or IOException or
+                                      UnauthorizedAccessException or ExternalException or OutOfMemoryException)
+        {
+            if (!IsDisposed && !Disposing)
+            {
+                statusLabel.Text = "Не удалось открыть изображение.";
+                MessageBox.Show(this, "Не удалось прочитать изображение. Файл может быть повреждён " +
+                    "или иметь неподдерживаемый формат.\n\n" + error.Message,
+                    "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        finally
+        {
+            if (!IsDisposed && !Disposing)
+            {
+                openButton.Enabled = true;
+                loadProgressBar.Visible = false;
+            }
+        }
+    }
+
+    private static void SetImage(PictureBox pictureBox, Bitmap? image)
+    {
+        var previous = pictureBox.Image;
+        pictureBox.Image = image;
+        previous?.Dispose();
+    }
+
 }
