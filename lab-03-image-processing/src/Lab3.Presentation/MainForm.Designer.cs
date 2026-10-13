@@ -4,6 +4,11 @@ partial class MainForm
 {
     private System.ComponentModel.IContainer components = null!;
     private Button openButton = null!;
+    private Label methodLabel = null!;
+    private FlowLayoutPanel methodPanel = null!;
+    private ComboBox methodComboBox = null!;
+    private Button processButton = null!;
+    private Label thresholdLabel = null!;
     private FlowLayoutPanel toolbar = null!;
     private TableLayoutPanel imagesPanel = null!;
     private Label sourceTitle = null!;
@@ -19,8 +24,9 @@ partial class MainForm
     {
         if (disposing)
         {
+            _cancellation?.Cancel();
             SetImage(sourcePictureBox, null);
-            SetImage(resultPictureBox, null);
+            ClearResult();
             components?.Dispose();
         }
         base.Dispose(disposing);
@@ -30,6 +36,11 @@ partial class MainForm
     {
         components = new System.ComponentModel.Container();
         openButton = new Button();
+        methodLabel = new Label();
+        methodPanel = new FlowLayoutPanel();
+        methodComboBox = new ComboBox();
+        processButton = new Button();
+        thresholdLabel = new Label();
         toolbar = new FlowLayoutPanel();
         imagesPanel = new TableLayoutPanel();
         sourceTitle = new Label();
@@ -41,6 +52,7 @@ partial class MainForm
         statusLabel = new ToolStripStatusLabel();
         loadProgressBar = new ToolStripProgressBar();
         toolbar.SuspendLayout();
+        methodPanel.SuspendLayout();
         imagesPanel.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)sourcePictureBox).BeginInit();
         ((System.ComponentModel.ISupportInitialize)resultPictureBox).BeginInit();
@@ -54,12 +66,42 @@ partial class MainForm
         openButton.Text = "Открыть изображение";
         openButton.Click += OpenButton_Click;
 
+        methodLabel.AutoSize = true;
+        methodLabel.Margin = new Padding(3, 10, 3, 3);
+        methodLabel.Text = "Метод:";
+        methodComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        methodComboBox.Items.AddRange(new object[] { "Метод Оцу", "Итеративный метод" });
+        methodComboBox.Margin = new Padding(3, 6, 3, 3);
+        methodComboBox.Name = "methodComboBox";
+        methodComboBox.Width = 180;
+        methodComboBox.SelectedIndex = 0;
+        methodPanel.AutoSize = true;
+        methodPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        methodPanel.Margin = new Padding(6, 0, 3, 0);
+        methodPanel.WrapContents = false;
+        methodPanel.Controls.Add(methodLabel);
+        methodPanel.Controls.Add(methodComboBox);
+        processButton.AutoSize = true;
+        processButton.Enabled = false;
+        processButton.Name = "processButton";
+        processButton.Padding = new Padding(8, 4, 8, 4);
+        processButton.Text = "Обработать";
+        processButton.Click += ProcessButton_Click;
+        thresholdLabel.AutoSize = true;
+        thresholdLabel.Margin = new Padding(10, 10, 3, 3);
+        thresholdLabel.Text = "Порог: —";
+
         toolbar.Controls.Add(openButton);
+        toolbar.Controls.Add(methodPanel);
+        toolbar.Controls.Add(processButton);
+        toolbar.Controls.Add(thresholdLabel);
+        toolbar.AutoSize = true;
+        toolbar.AutoSizeMode = AutoSizeMode.GrowAndShrink;
         toolbar.Dock = DockStyle.Top;
         toolbar.Height = 52;
         toolbar.Name = "toolbar";
         toolbar.Padding = new Padding(8);
-        toolbar.WrapContents = false;
+        toolbar.WrapContents = true;
 
         sourcePictureBox.BackColor = Color.WhiteSmoke;
         sourcePictureBox.BorderStyle = BorderStyle.FixedSingle;
@@ -121,6 +163,8 @@ partial class MainForm
         Name = "MainForm";
         toolbar.ResumeLayout(false);
         toolbar.PerformLayout();
+        methodPanel.ResumeLayout(false);
+        methodPanel.PerformLayout();
         imagesPanel.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)sourcePictureBox).EndInit();
         ((System.ComponentModel.ISupportInitialize)resultPictureBox).EndInit();

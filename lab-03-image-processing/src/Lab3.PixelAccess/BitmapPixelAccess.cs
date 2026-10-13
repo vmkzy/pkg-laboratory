@@ -81,4 +81,38 @@ public static class BitmapPixelAccess
 
     private static byte CompositeOnWhite(byte channel, byte alpha) =>
         (byte)((channel * alpha + 255 * (255 - alpha) + 127) / 255);
+
+    public static unsafe Bitmap ToBitmap(GrayBuffer buffer)
+    {
+        ArgumentNullException.ThrowIfNull(buffer);
+        var bitmap = new Bitmap(buffer.Width, buffer.Height, PixelFormat.Format32bppArgb);
+        try
+        {
+            var rectangle = new Rectangle(0, 0, buffer.Width, buffer.Height);
+            var data = bitmap.LockBits(rectangle, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+            try
+            {
+                for (var y = 0; y < buffer.Height; y++)
+                {
+                    var row = (byte*)data.Scan0 + (long)y * data.Stride;
+                    for (var x = 0; x < buffer.Width; x++)
+                    {
+                        var pixel = row + x * 4;
+                        pixel[0] = pixel[1] = pixel[2] = buffer.Pixels[y, x];
+                        pixel[3] = 255;
+                    }
+                }
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+            return bitmap;
+        }
+        catch
+        {
+            bitmap.Dispose();
+            throw;
+        }
+    }
 }
