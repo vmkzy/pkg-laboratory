@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lab4.RasterEngine/Lab4.RasterEngine.csproj" />
+    <Project Path="src/Lab4.RasterData/Lab4.RasterData.csproj" />
+    <Project Path="src/Lab4.Presentation/Lab4.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lab4.Tests/Lab4.Tests.csproj" />
+  </Folder>
+</Solution>

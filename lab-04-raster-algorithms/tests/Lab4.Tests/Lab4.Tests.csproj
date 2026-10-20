@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Lab4.RasterEngine/Lab4.RasterEngine.csproj" />
+    <ProjectReference Include="../../src/Lab4.RasterData/Lab4.RasterData.csproj" />
+  </ItemGroup>
+</Project>
