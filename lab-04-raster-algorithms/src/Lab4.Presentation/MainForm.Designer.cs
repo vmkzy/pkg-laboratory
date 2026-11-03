@@ -1,3 +1,5 @@
+using Lab4.RasterData;
+
 namespace Lab4.Presentation;
 
 partial class MainForm
@@ -10,8 +12,19 @@ partial class MainForm
     private NumericUpDown centerXInput = null!;
     private NumericUpDown centerYInput = null!;
     private NumericUpDown radiusInput = null!;
+    private NumericUpDown radiusXInput = null!;
+    private NumericUpDown radiusYInput = null!;
+    private NumericUpDown cellSizeInput = null!;
+    private FlowLayoutPanel radiusGroup = null!;
+    private FlowLayoutPanel radiusXGroup = null!;
+    private FlowLayoutPanel radiusYGroup = null!;
+    private Button fitButton = null!;
+    private CheckBox showGridCheckBox = null!;
+    private CheckBox showAxesCheckBox = null!;
+    private Label pixelInfoLabel = null!;
     private Button drawButton = null!;
     private Button clearButton = null!;
+    private Button benchmarkButton = null!;
     private FlowLayoutPanel lineInputs = null!;
     private FlowLayoutPanel circleInputs = null!;
     private Label hintLabel = null!;
@@ -47,6 +60,11 @@ partial class MainForm
             Name = "clearButton", Text = "Очистить", AutoSize = true,
             Padding = new Padding(12, 4, 12, 4), Margin = new Padding(0, 0, 0, 4)
         };
+        benchmarkButton = new Button
+        {
+            Name = "benchmarkButton", Text = "Сравнить скорость", AutoSize = true,
+            Padding = new Padding(8, 4, 8, 4), Margin = new Padding(12, 0, 0, 4)
+        };
         var toolbar = CreateRow();
         toolbar.Controls.Add(new Label
         {
@@ -56,6 +74,7 @@ partial class MainForm
         toolbar.Controls.Add(methodComboBox);
         toolbar.Controls.Add(drawButton);
         toolbar.Controls.Add(clearButton);
+        toolbar.Controls.Add(benchmarkButton);
 
         x0Input = CreateNumber("x0Input", -25, -40, 40);
         y0Input = CreateNumber("y0Input", -15, -40, 40);
@@ -75,27 +94,62 @@ partial class MainForm
         circleInputs.Name = "circleInputs";
         AddInput(circleInputs, "Центр X:", centerXInput);
         AddInput(circleInputs, "Центр Y:", centerYInput);
-        AddInput(circleInputs, "Радиус:", radiusInput);
+        radiusGroup = AddInput(circleInputs, "Радиус:", radiusInput);
+        radiusXInput = CreateNumber("radiusXInput", 25, 0, 40);
+        radiusYInput = CreateNumber("radiusYInput", 12, 0, 40);
+        radiusXGroup = AddInput(circleInputs, "Полуось A:", radiusXInput);
+        radiusYGroup = AddInput(circleInputs, "Полуось B:", radiusYInput);
+        radiusXGroup.Visible = false;
+        radiusYGroup.Visible = false;
         circleInputs.Visible = false;
+
+        cellSizeInput = CreateNumber("cellSizeInput", 8, GridViewport.MinimumCellSize, GridViewport.MaximumCellSize);
+        var viewRow = CreateRow();
+        AddInput(viewRow, "Масштаб, пкс/клетку:", cellSizeInput);
+        fitButton = new Button
+        {
+            Name = "fitButton", Text = "Весь растр", AutoSize = true,
+            Padding = new Padding(6, 2, 6, 2), Margin = new Padding(0, 0, 16, 0)
+        };
+        showGridCheckBox = new CheckBox
+        {
+            Name = "showGridCheckBox", Text = "Сетка", Checked = true, AutoSize = true,
+            Margin = new Padding(0, 6, 12, 0)
+        };
+        showAxesCheckBox = new CheckBox
+        {
+            Name = "showAxesCheckBox", Text = "Оси", Checked = true, AutoSize = true,
+            Margin = new Padding(0, 6, 16, 0)
+        };
+        pixelInfoLabel = new Label
+        {
+            Name = "pixelInfoLabel", Text = "Наведите курсор на клетку", AutoSize = true,
+            Padding = new Padding(0, 7, 0, 0)
+        };
+        viewRow.Controls.Add(fitButton);
+        viewRow.Controls.Add(showGridCheckBox);
+        viewRow.Controls.Add(showAxesCheckBox);
+        viewRow.Controls.Add(pixelInfoLabel);
 
         hintLabel = new Label
         {
             AutoSize = true, Dock = DockStyle.Fill,
-            Text = "Растр 81 × 81, координаты от −40 до 40. Одна клетка — один пиксель; координата задаёт центр клетки. Y направлена вверх.",
+            Text = "",
             Padding = new Padding(0, 5, 0, 2), ForeColor = Color.DimGray
         };
         var settingsLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            ColumnCount = 1, RowCount = 4, Margin = Padding.Empty
+            ColumnCount = 1, RowCount = 5, Margin = Padding.Empty
         };
         settingsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        for (var i = 0; i < 4; i++)
+        for (var i = 0; i < 5; i++)
             settingsLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         settingsLayout.Controls.Add(toolbar, 0, 0);
         settingsLayout.Controls.Add(lineInputs, 0, 1);
         settingsLayout.Controls.Add(circleInputs, 0, 2);
         settingsLayout.Controls.Add(hintLabel, 0, 3);
+        settingsLayout.Controls.Add(viewRow, 0, 4);
 
         gridPainter = new GridPainter
         {
@@ -135,7 +189,7 @@ partial class MainForm
         Width = 82, Margin = new Padding(4), TextAlign = HorizontalAlignment.Right
     };
 
-    private static void AddInput(FlowLayoutPanel row, string label, NumericUpDown input)
+    private static FlowLayoutPanel AddInput(FlowLayoutPanel row, string label, NumericUpDown input)
     {
         var group = new FlowLayoutPanel
         {
@@ -148,5 +202,6 @@ partial class MainForm
         });
         group.Controls.Add(input);
         row.Controls.Add(group);
+        return group;
     }
 }

@@ -1,6 +1,6 @@
 namespace Lab4.RasterEngine;
 
-public static class RasterAlgorithms
+public static partial class RasterAlgorithms
 {
     public static void StepLine(int x0, int y0, int x1, int y1, IRasterTarget target)
     {

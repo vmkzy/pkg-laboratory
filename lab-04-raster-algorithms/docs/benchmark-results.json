@@ -1,0 +1,658 @@
+{
+  "MeasuredAt": "2026-11-03T10:23:12.2732398+03:00",
+  "Runtime": ".NET 10.0.12",
+  "OperatingSystem": "Microsoft Windows 10.0.26300",
+  "Architecture": "X64",
+  "Processor": "AMD64 Family 25 Model 116 Stepping 1, AuthenticAMD",
+  "LogicalProcessors": 16,
+  "TimerFrequency": 10000000,
+  "HighResolutionTimer": true,
+  "DebugBuild": false,
+  "Options": {
+    "LineCount": 100000,
+    "CircleCount": 50000,
+    "LengthTestCount": 20000,
+    "MaximumLength": 256,
+    "Repetitions": 3,
+    "Seed": 9
+  },
+  "Points": [
+    {
+      "Scenario": "LineCount",
+      "Method": "StepLine",
+      "PrimitiveCount": 10000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        8.0521,
+        8.0231,
+        7.0965
+      ],
+      "PopulatedPixels": 192814,
+      "MedianMilliseconds": 8.0231
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "DdaLine",
+      "PrimitiveCount": 10000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        11.6562,
+        12.2734,
+        11.2705
+      ],
+      "PopulatedPixels": 192802,
+      "MedianMilliseconds": 11.6562
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 10000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        6.4575,
+        6.9078,
+        6.5209
+      ],
+      "PopulatedPixels": 192812,
+      "MedianMilliseconds": 6.5209
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "WuLine",
+      "PrimitiveCount": 10000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        11.754,
+        12.7568,
+        11.5174
+      ],
+      "PopulatedPixels": 220671,
+      "MedianMilliseconds": 11.754
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 10000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        22.5484,
+        28.8264,
+        24.0317
+      ],
+      "PopulatedPixels": 192812,
+      "MedianMilliseconds": 24.0317
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "StepLine",
+      "PrimitiveCount": 25000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        18.3505,
+        20.3203,
+        18.7264
+      ],
+      "PopulatedPixels": 227335,
+      "MedianMilliseconds": 18.7264
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "DdaLine",
+      "PrimitiveCount": 25000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        29.3009,
+        33.9454,
+        27.5569
+      ],
+      "PopulatedPixels": 227335,
+      "MedianMilliseconds": 29.3009
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 25000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        16.8971,
+        16.1377,
+        16.4753
+      ],
+      "PopulatedPixels": 227335,
+      "MedianMilliseconds": 16.4753
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "WuLine",
+      "PrimitiveCount": 25000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        30.6721,
+        30.3418,
+        29.8366
+      ],
+      "PopulatedPixels": 243378,
+      "MedianMilliseconds": 30.3418
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 25000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        58.1866,
+        55.5188,
+        58.3546
+      ],
+      "PopulatedPixels": 227335,
+      "MedianMilliseconds": 58.1866
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "StepLine",
+      "PrimitiveCount": 50000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        37.6685,
+        37.802,
+        38.198
+      ],
+      "PopulatedPixels": 243442,
+      "MedianMilliseconds": 37.802
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "DdaLine",
+      "PrimitiveCount": 50000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        58.9263,
+        57.0828,
+        56.0614
+      ],
+      "PopulatedPixels": 243439,
+      "MedianMilliseconds": 57.0828
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 50000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        33.7194,
+        35.9029,
+        32.7363
+      ],
+      "PopulatedPixels": 243442,
+      "MedianMilliseconds": 33.7194
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "WuLine",
+      "PrimitiveCount": 50000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        59.1163,
+        71.8948,
+        59.0007
+      ],
+      "PopulatedPixels": 252845,
+      "MedianMilliseconds": 59.1163
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 50000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        112.2665,
+        136.7525,
+        138.1745
+      ],
+      "PopulatedPixels": 243442,
+      "MedianMilliseconds": 136.7525
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "StepLine",
+      "PrimitiveCount": 100000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        77.2789,
+        84.9842,
+        83.9846
+      ],
+      "PopulatedPixels": 253353,
+      "MedianMilliseconds": 83.9846
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "DdaLine",
+      "PrimitiveCount": 100000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        117.4842,
+        128.4776,
+        114.7665
+      ],
+      "PopulatedPixels": 253354,
+      "MedianMilliseconds": 117.4842
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 100000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        65.3701,
+        78.4451,
+        66.857
+      ],
+      "PopulatedPixels": 253353,
+      "MedianMilliseconds": 66.857
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "WuLine",
+      "PrimitiveCount": 100000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        118.9535,
+        136.0223,
+        120.0577
+      ],
+      "PopulatedPixels": 258139,
+      "MedianMilliseconds": 120.0577
+    },
+    {
+      "Scenario": "LineCount",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 100000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        226.2418,
+        264.4402,
+        235.5481
+      ],
+      "PopulatedPixels": 253353,
+      "MedianMilliseconds": 235.5481
+    },
+    {
+      "Scenario": "CircleCount",
+      "Method": "BresenhamCircle",
+      "PrimitiveCount": 5000,
+      "LineLength": 0,
+      "SamplesMilliseconds": [
+        11.7298,
+        11.6002,
+        11.5333
+      ],
+      "PopulatedPixels": 186084,
+      "MedianMilliseconds": 11.6002
+    },
+    {
+      "Scenario": "CircleCount",
+      "Method": "BresenhamCircle",
+      "PrimitiveCount": 12500,
+      "LineLength": 0,
+      "SamplesMilliseconds": [
+        32.0202,
+        30.8625,
+        28.3878
+      ],
+      "PopulatedPixels": 186084,
+      "MedianMilliseconds": 30.8625
+    },
+    {
+      "Scenario": "CircleCount",
+      "Method": "BresenhamCircle",
+      "PrimitiveCount": 25000,
+      "LineLength": 0,
+      "SamplesMilliseconds": [
+        62.2053,
+        60.8715,
+        57.5222
+      ],
+      "PopulatedPixels": 186084,
+      "MedianMilliseconds": 60.8715
+    },
+    {
+      "Scenario": "CircleCount",
+      "Method": "BresenhamCircle",
+      "PrimitiveCount": 50000,
+      "LineLength": 0,
+      "SamplesMilliseconds": [
+        116.27,
+        131.3707,
+        114.6987
+      ],
+      "PopulatedPixels": 186084,
+      "MedianMilliseconds": 116.27
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "StepLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 16,
+      "SamplesMilliseconds": [
+        2.0859,
+        3.1066,
+        1.9388
+      ],
+      "PopulatedPixels": 1021,
+      "MedianMilliseconds": 2.0859
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "DdaLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 16,
+      "SamplesMilliseconds": [
+        3.1758,
+        3.4475,
+        2.6486
+      ],
+      "PopulatedPixels": 1021,
+      "MedianMilliseconds": 3.1758
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 16,
+      "SamplesMilliseconds": [
+        1.992,
+        2.1882,
+        2.2504
+      ],
+      "PopulatedPixels": 1021,
+      "MedianMilliseconds": 2.1882
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "WuLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 16,
+      "SamplesMilliseconds": [
+        3.3284,
+        3.7432,
+        2.8925
+      ],
+      "PopulatedPixels": 1081,
+      "MedianMilliseconds": 3.3284
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 16,
+      "SamplesMilliseconds": [
+        9.779,
+        10.3456,
+        8.3738
+      ],
+      "PopulatedPixels": 1021,
+      "MedianMilliseconds": 9.779
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "StepLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 32,
+      "SamplesMilliseconds": [
+        3.6427,
+        5.3406,
+        4.4319
+      ],
+      "PopulatedPixels": 4093,
+      "MedianMilliseconds": 4.4319
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "DdaLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 32,
+      "SamplesMilliseconds": [
+        5.4243,
+        7.0593,
+        5.1976
+      ],
+      "PopulatedPixels": 4093,
+      "MedianMilliseconds": 5.4243
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 32,
+      "SamplesMilliseconds": [
+        3.1043,
+        3.5298,
+        3.2453
+      ],
+      "PopulatedPixels": 4093,
+      "MedianMilliseconds": 3.2453
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "WuLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 32,
+      "SamplesMilliseconds": [
+        7.696,
+        6.0463,
+        5.5426
+      ],
+      "PopulatedPixels": 4217,
+      "MedianMilliseconds": 6.0463
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 32,
+      "SamplesMilliseconds": [
+        17.199,
+        15.7491,
+        13.4641
+      ],
+      "PopulatedPixels": 4093,
+      "MedianMilliseconds": 15.7491
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "StepLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 64,
+      "SamplesMilliseconds": [
+        8.1189,
+        7.7032,
+        7.7373
+      ],
+      "PopulatedPixels": 16381,
+      "MedianMilliseconds": 7.7373
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "DdaLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 64,
+      "SamplesMilliseconds": [
+        11.2449,
+        11.8227,
+        10.8075
+      ],
+      "PopulatedPixels": 16381,
+      "MedianMilliseconds": 11.2449
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 64,
+      "SamplesMilliseconds": [
+        6.1595,
+        6.8243,
+        6.9574
+      ],
+      "PopulatedPixels": 16381,
+      "MedianMilliseconds": 6.8243
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "WuLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 64,
+      "SamplesMilliseconds": [
+        11.6524,
+        12.735,
+        12.0881
+      ],
+      "PopulatedPixels": 16633,
+      "MedianMilliseconds": 12.0881
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 64,
+      "SamplesMilliseconds": [
+        25.7275,
+        26.774,
+        24.1894
+      ],
+      "PopulatedPixels": 16381,
+      "MedianMilliseconds": 25.7275
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "StepLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 128,
+      "SamplesMilliseconds": [
+        14.504,
+        15.6535,
+        14.1139
+      ],
+      "PopulatedPixels": 65533,
+      "MedianMilliseconds": 14.504
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "DdaLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 128,
+      "SamplesMilliseconds": [
+        22.6986,
+        24.4204,
+        22.5178
+      ],
+      "PopulatedPixels": 65533,
+      "MedianMilliseconds": 22.6986
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 128,
+      "SamplesMilliseconds": [
+        13.0622,
+        14.1392,
+        12.0568
+      ],
+      "PopulatedPixels": 65533,
+      "MedianMilliseconds": 13.0622
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "WuLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 128,
+      "SamplesMilliseconds": [
+        24.0365,
+        27.8252,
+        22.5848
+      ],
+      "PopulatedPixels": 66041,
+      "MedianMilliseconds": 24.0365
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 128,
+      "SamplesMilliseconds": [
+        50.5374,
+        51.5881,
+        43.729
+      ],
+      "PopulatedPixels": 65533,
+      "MedianMilliseconds": 50.5374
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "StepLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        32.9775,
+        37.7066,
+        30.4783
+      ],
+      "PopulatedPixels": 262141,
+      "MedianMilliseconds": 32.9775
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "DdaLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        45.6377,
+        52.3313,
+        44.6675
+      ],
+      "PopulatedPixels": 262141,
+      "MedianMilliseconds": 45.6377
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "BresenhamLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        30.3887,
+        28.853,
+        26.7919
+      ],
+      "PopulatedPixels": 262141,
+      "MedianMilliseconds": 28.853
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "WuLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        58.0074,
+        53.1901,
+        46.7058
+      ],
+      "PopulatedPixels": 263161,
+      "MedianMilliseconds": 53.1901
+    },
+    {
+      "Scenario": "LineLength",
+      "Method": "CastlePittewayLine",
+      "PrimitiveCount": 20000,
+      "LineLength": 256,
+      "SamplesMilliseconds": [
+        85.3663,
+        99.6593,
+        83.1054
+      ],
+      "PopulatedPixels": 262141,
+      "MedianMilliseconds": 85.3663
+    }
+  ]
+}

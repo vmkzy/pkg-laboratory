@@ -10,7 +10,8 @@ internal static class LineTests
         [
             ("Пошаговый", RasterAlgorithms.StepLine),
             ("ЦДА", RasterAlgorithms.DdaLine),
-            ("Брезенхем", RasterAlgorithms.BresenhamLine)
+            ("Брезенхем", RasterAlgorithms.BresenhamLine),
+            ("Кастла–Питвея", RasterAlgorithms.CastlePittewayLine)
         ];
         Point[] endpoints =
         [
